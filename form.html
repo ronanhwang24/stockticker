@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Stock Search</title>
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            border: 1px solid black;
+            padding: 8px;
+            text-align: left;
+        }
+    </style>
+</head>
+<body>
+    <h1>Search for Stock Information</h1>
+    <form id="stockForm">
+        <input type="text" id="query" required>
+        <br><br>
+        <input type="radio" name="search_type" value="ticker" checked> Ticker Symbol
+        <input type="radio" name="search_type" value="company"> Company Name
+        <br><br>
+        <input type="submit" value="Search">
+    </form>
+    <h2>Search Results</h2>
+    <table id="resultsTable">
+        <tr>
+            <th>Company Name</th>
+            <th>Stock Ticker</th>
+            <th>Stock Price</th>
+        </tr>
+    </table>
+    <script>
+        document.getElementById('stockForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const query = document.getElementById('query').value;
+            const searchType = document.querySelector('input[name="search_type"]:checked').value;
+            fetch(`https://api.example.com/stocks?query=${query}&type=${searchType}`)
+                .then(response => response.json())
+                .then(data => {
+                    const resultsTable = document.getElementById('resultsTable');
+                    resultsTable.innerHTML = '<tr><th>Company Name</th><th>Stock Ticker</th><th>Stock Price</th></tr>';
+                    data.forEach(result => {
+                        const row = `<tr><td>${result.name}</td><td>${result.ticker}</td><td>${result.price}</td></tr>`;
+                        resultsTable.innerHTML += row;
+                    });
+                });
+        });
+    </script>
+</body>
+</html>
