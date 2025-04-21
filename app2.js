@@ -10,13 +10,13 @@ const uri = "mongodb+srv://ronanhwang:<db_password>@stickerhw.ia1unic.mongodb.ne
 const client = new MongoClient(uri, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
-    tls: true, // Ensure TLS/SSL connection
-    tlsAllowInvalidCertificates: false, // Certificates must be valid
+    tls: true,
+    tlsAllowInvalidCertificates: false,
 });
 
 // Middleware
-app.set("view engine", "ejs"); // Use EJS for rendering
-app.use(express.urlencoded({ extended: true })); // Parse URL-encoded data
+app.set("view engine", "ejs");
+app.use(express.urlencoded({ extended: true }));
 
 // Home Route - Displays the Search Form
 app.get("/", (req, res) => {
@@ -25,26 +25,24 @@ app.get("/", (req, res) => {
 
 // Process Route - Handles Search Queries
 app.get("/process", async (req, res) => {
-    const { query, type } = req.query; // Get input from the form
+    const { query, type } = req.query;
 
     try {
-        // Connect to MongoDB
         await client.connect();
         console.log("Connected to MongoDB!");
 
-        // Select the database and collection
         const db = client.db("stock");
         const collection = db.collection("PublicCompanies");
 
-        // Search Logic
         let results;
         if (type === "company") {
-            // Case-insensitive search for company name
             results = await collection.find({ companyName: new RegExp(query, "i") }).toArray();
         } else if (type === "ticker") {
-            // Case-insensitive search for stock ticker
             results = await collection.find({ stockTicker: new RegExp(query, "i") }).toArray();
         }
+
+        // Display results in the console
+        console.log(results);
 
         // Render the Results
         res.render("process", { results });
@@ -52,7 +50,6 @@ app.get("/process", async (req, res) => {
         console.error("Error during search:", error);
         res.status(500).send("An error occurred. Please try again later.");
     } finally {
-        // Close the MongoDB connection
         await client.close();
     }
 });
