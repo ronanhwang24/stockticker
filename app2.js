@@ -3,10 +3,10 @@ const { MongoClient } = require("mongodb");
 const path = require("path");
 const app = express();
 
-// MongoDB Connection URI
+// MongoDB URI
 const uri = "mongodb+srv://ronanhwang:ronanhwang@stickerhw.ia1unic.mongodb.net/?retryWrites=true&w=majority&appName=stickerhw";
 
-// MongoDB Client Configuration
+// MongoDB Client Config
 const client = new MongoClient(uri, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
@@ -16,13 +16,17 @@ const client = new MongoClient(uri, {
 
 // Middleware
 app.use(express.urlencoded({ extended: true }));
+app.use(express.static(__dirname)); // Serve static files from project root
 
-// Serve static files (like index.html) from the 'public' folder
-app.use(express.static(path.join(__dirname, "public")));
+// Root route → serve index.html
+app.get("/", (req, res) => {
+  res.sendFile(path.join(__dirname, "index.html"));
+});
 
-// Process Route - Handles Search Queries and returns basic HTML
+// /process route → handle form/search
 app.get("/process", async (req, res) => {
   const { query, type } = req.query;
+
   try {
     await client.connect();
     const db = client.db("stock");
@@ -39,6 +43,7 @@ app.get("/process", async (req, res) => {
       return res.send("<p>No results found.</p><a href='/'>Back to search</a>");
     }
 
+    // Format and send HTML response
     const htmlResults = results.map(r => `
       <tr>
         <td>${r.companyName}</td>
@@ -63,7 +68,7 @@ app.get("/process", async (req, res) => {
   }
 });
 
-// Port Configuration
+// Port setup for Heroku
 const PORT = process.env.PORT || 8081;
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);
