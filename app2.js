@@ -3,7 +3,7 @@ const { MongoClient } = require("mongodb");
 const app = express();
 
 // MongoDB Connection URI
-const uri = "mongodb+srv://ronanhwang:<db_password>@stickerhw.ia1unic.mongodb.net/?retryWrites=true&w=majority&appName=stickerhw";
+const uri = "mongodb+srv://ronanhwang:ronanhwang@stickerhw.ia1unic.mongodb.net/?retryWrites=true&w=majority&appName=stickerhw";
 
 // MongoDB Client Configuration
 const client = new MongoClient(uri, {
