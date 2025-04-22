@@ -1,5 +1,6 @@
 const express = require("express");
 const { MongoClient } = require("mongodb");
+const path = require("path");
 const app = express();
 
 // MongoDB Connection URI
@@ -14,32 +15,46 @@ const client = new MongoClient(uri, {
 });
 
 // Middleware
-app.set("view engine", "ejs");
 app.use(express.urlencoded({ extended: true }));
 
-// Home Route - Displays the Search Form
-app.get("/", (req, res) => {
-  res.render("home"); // Render 'home.ejs'
-});
+// Serve static files (like index.html) from the 'public' folder
+app.use(express.static(path.join(__dirname, "public")));
 
-// Process Route - Handles Search Queries
+// Process Route - Handles Search Queries and returns basic HTML
 app.get("/process", async (req, res) => {
   const { query, type } = req.query;
   try {
     await client.connect();
-    console.log("Connected to MongoDB!");
     const db = client.db("stock");
     const collection = db.collection("PublicCompanies");
+
     let results;
     if (type === "company") {
       results = await collection.find({ companyName: new RegExp(query, "i") }).toArray();
     } else if (type === "ticker") {
       results = await collection.find({ stockTicker: new RegExp(query, "i") }).toArray();
     }
-    // Display results in the console
-    console.log(results);
-    // Render the Results
-    res.render("process", { results });
+
+    if (!results || results.length === 0) {
+      return res.send("<p>No results found.</p><a href='/'>Back to search</a>");
+    }
+
+    const htmlResults = results.map(r => `
+      <tr>
+        <td>${r.companyName}</td>
+        <td>${r.stockTicker}</td>
+      </tr>
+    `).join("");
+
+    res.send(`
+      <h2>Search Results</h2>
+      <table border="1">
+        <tr><th>Company Name</th><th>Ticker</th></tr>
+        ${htmlResults}
+      </table>
+      <br>
+      <a href="/">Back to Search</a>
+    `);
   } catch (error) {
     console.error("Error during search:", error);
     res.status(500).send("An error occurred. Please try again later.");
