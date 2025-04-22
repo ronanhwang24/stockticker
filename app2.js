@@ -3,10 +3,10 @@ const { MongoClient } = require("mongodb");
 const path = require("path");
 const app = express();
 
-// MongoDB URI
+// MongoDB Connection URI
 const uri = "mongodb+srv://ronanhwang:ronanhwang@stickerhw.ia1unic.mongodb.net/?retryWrites=true&w=majority&appName=stickerhw";
 
-// MongoDB Client Config
+// MongoDB Client Configuration
 const client = new MongoClient(uri, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
@@ -14,31 +14,33 @@ const client = new MongoClient(uri, {
   tlsAllowInvalidCertificates: false,
 });
 
-// Middleware
+// Middleware to serve static files
 app.use(express.urlencoded({ extended: true }));
-app.use(express.static(__dirname)); // Serve static files from root
+app.use(express.static(__dirname)); // Serves static files from the root directory
 
 // Serve the index.html page
 app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname, "index.html"));
 });
 
-// Handle search queries
+// Process the search query
 app.get("/process", async (req, res) => {
-  const { query, type } = req.query;
-  console.log("Incoming search:", req.query);
+  const { query, search_type } = req.query;
+  console.log("Search query:", query, "Type:", search_type);
 
   try {
     await client.connect();
-    const db = client.db("stock");
+    const db = client.db("Stock");
     const collection = db.collection("PublicCompanies");
 
     let results;
-    if (type === "company") {
-      results = await collection.find({ companyName: new RegExp(query, "i") }).toArray();
-    } else if (type === "ticker") {
-      results = await collection.find({ stockTicker: new RegExp(query, "i") }).toArray();
+    if (search_type === "company") {
+      results = await collection.find({ Company: new RegExp(query, "i") }).toArray();
+    } else if (search_type === "ticker") {
+      results = await collection.find({ Ticker: new RegExp(query, "i") }).toArray();
     }
+
+    console.log("Search results:", results);
 
     if (!results || results.length === 0) {
       return res.send("<p>No results found.</p><a href='/'>Back to search</a>");
@@ -46,15 +48,16 @@ app.get("/process", async (req, res) => {
 
     const htmlResults = results.map(r => `
       <tr>
-        <td>${r.companyName}</td>
-        <td>${r.stockTicker}</td>
+        <td>${r.Company}</td>
+        <td>${r.Ticker}</td>
+        <td>${r.Price}</td>
       </tr>
     `).join("");
 
     res.send(`
       <h2>Search Results</h2>
       <table border="1">
-        <tr><th>Company Name</th><th>Ticker</th></tr>
+        <tr><th>Company Name</th><th>Ticker</th><th>Price</th></tr>
         ${htmlResults}
       </table>
       <br>
@@ -68,7 +71,7 @@ app.get("/process", async (req, res) => {
   }
 });
 
-// Port
+// Port Configuration
 const PORT = process.env.PORT || 8081;
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);
