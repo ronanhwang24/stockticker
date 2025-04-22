@@ -1,43 +1,28 @@
 <!DOCTYPE html>
-<html>
 <head>
-  <title>Stock Search</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      text-align: center;
-      padding: 40px;
-    }
-    form {
-      display: inline-block;
-      margin-top: 20px;
-    }
-    input[type="text"] {
-      width: 300px;
-      padding: 10px;
-      margin: 10px 0;
-    }
-    input[type="submit"] {
-      padding: 10px 20px;
-      background-color: #007bff;
-      color: white;
-      border: none;
-      cursor: pointer;
-    }
-    input[type="submit"]:hover {
-      background-color: #0056b3;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <title>Stock Search</title>
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            border: 1px solid black;
+            padding: 8px;
+            text-align: left;
+        }
+    </style>
 </head>
 <body>
-  <h1>Search for Stock Information</h1>
-  <form id="stockForm" action="/process" method="GET">
-    <input type="text" id="query" name="query" placeholder="Enter ticker or company name" required>
-    <br>
-    <input type="radio" name="search_type" value="ticker" checked> Ticker Symbol
-    <input type="radio" name="search_type" value="company"> Company Name
-    <br><br>
-    <input type="submit" value="Search">
-  </form>
+    <h1>Search for Stock Information</h1>
+    <form id="stockForm" action="/process" method="GET">
+        <input type="text" id="query" name="query" required placeholder="Enter Company or Ticker">
+        <br><br>
+        <input type="radio" name="search_type" value="ticker" checked> Ticker Symbol
+        <input type="radio" name="search_type" value="company"> Company Name
+        <br><br>
+        <input type="submit" value="Search">
+    </form>
 </body>
 </html>
