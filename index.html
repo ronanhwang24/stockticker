@@ -1,28 +1,30 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>Stock Search</title>
-  <style>
-    table {
-      width: 100%;
-      border-collapse: collapse;
-    }
-    th, td {
-      border: 1px solid black;
-      padding: 8px;
-      text-align: left;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stock Search</title>
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            border: 1px solid black;
+            padding: 8px;
+            text-align: left;
+        }
+    </style>
 </head>
 <body>
-  <h1>Search for Stock Information</h1>
-  <form id="stockForm" action="/process" method="GET">
-    <input type="text" id="query" name="query" required placeholder="Enter company or ticker">
-    <br><br>
-    <input type="radio" name="type" value="ticker" checked> Ticker Symbol
-    <input type="radio" name="type" value="company"> Company Name
-    <br><br>
-    <input type="submit" value="Search">
-  </form>
+    <h1>Search for Stock Information</h1>
+    <form id="stockForm" action="/process" method="GET">
+        <input type="text" id="query" name="query" required placeholder="Enter Company or Ticker">
+        <br><br>
+        <input type="radio" name="search_type" value="ticker" checked> Ticker Symbol
+        <input type="radio" name="search_type" value="company"> Company Name
+        <br><br>
+        <input type="submit" value="Search">
+    </form>
 </body>
 </html>
