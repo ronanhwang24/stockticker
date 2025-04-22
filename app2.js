@@ -16,16 +16,17 @@ const client = new MongoClient(uri, {
 
 // Middleware
 app.use(express.urlencoded({ extended: true }));
-app.use(express.static(__dirname)); // Serve static files from project root
+app.use(express.static(__dirname)); // Serve static files from root
 
-// Root route → serve index.html
+// Serve the index.html page
 app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname, "index.html"));
 });
 
-// /process route → handle form/search
+// Handle search queries
 app.get("/process", async (req, res) => {
   const { query, type } = req.query;
+  console.log("Incoming search:", req.query);
 
   try {
     await client.connect();
@@ -43,7 +44,6 @@ app.get("/process", async (req, res) => {
       return res.send("<p>No results found.</p><a href='/'>Back to search</a>");
     }
 
-    // Format and send HTML response
     const htmlResults = results.map(r => `
       <tr>
         <td>${r.companyName}</td>
@@ -68,7 +68,7 @@ app.get("/process", async (req, res) => {
   }
 });
 
-// Port setup for Heroku
+// Port
 const PORT = process.env.PORT || 8081;
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);
