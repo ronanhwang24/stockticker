@@ -1,17 +1,16 @@
 {
-  "dependencies": {
-    "ejs": "^3.1.10",
-    "express": "^4.21.2",
-    "mongodb": "^6.11.0"
-  },
-  "name": "stocks",
+  "name": "stock-ticker-app",
   "version": "1.0.0",
-  "main": "load_data.js",
+  "description": "A stock ticker search web app with MongoDB backend",
+  "main": "index.js",
   "scripts": {
-    "start": "node app.js"
+    "start": "node index.js"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "description": ""
+  "engines": {
+    "node": ">=14.0.0"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "mongodb": "^5.7.0"
+  }
 }
